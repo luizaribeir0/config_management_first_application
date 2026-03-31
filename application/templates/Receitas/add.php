@@ -1,0 +1,37 @@
+<?php
+/**
+ * @var \App\View\AppView $this
+ * @var \App\Model\Entity\Receita $receita
+ */
+?>
+<div class="row">
+    <aside class="column">
+        <div class="side-nav">
+            <h4 class="heading"><?= __('Actions') ?></h4>
+            <?= $this->Html->link(__('List Receitas'), ['action' => 'index'], ['class' => 'side-nav-item']) ?>
+        </div>
+    </aside>
+    <div class="column column-80">
+        <div class="receitas form content">
+            <?= $this->Form->create($receita) ?>
+            <fieldset>
+                <legend><?= __('Add Receita') ?></legend>
+                <?php
+                    echo $this->Form->control('nome');
+                    echo $this->Form->control('descricao');
+                    echo $this->Form->control('data_registro', ['empty' => true]);
+                    echo $this->Form->control('custo');
+                    echo $this->Form->control('tipo_receita', [
+                        'type' => 'select',
+                        'options' => [
+                            'doce' => __('Doce'),
+                            'salgada' => __('Salgada'),
+                        ],
+                    ]);
+                ?>
+            </fieldset>
+            <?= $this->Form->button(__('Submit')) ?>
+            <?= $this->Form->end() ?>
+        </div>
+    </div>
+</div>
