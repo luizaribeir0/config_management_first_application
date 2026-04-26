@@ -7,20 +7,20 @@
 <div class="row">
     <aside class="column">
         <div class="side-nav">
-            <h4 class="heading"><?= __('Actions') ?></h4>
+            <h4 class="heading"><?= __('Acoes') ?></h4>
             <?= $this->Form->postLink(
-                __('Delete'),
+                __('Excluir'),
                 ['action' => 'delete', $receita->id],
-                ['confirm' => __('Are you sure you want to delete # {0}?', $receita->id), 'class' => 'side-nav-item']
+                ['confirm' => __('Tem certeza que deseja excluir #{0}?', $receita->id), 'class' => 'side-nav-item']
             ) ?>
-            <?= $this->Html->link(__('List Receitas'), ['action' => 'index'], ['class' => 'side-nav-item']) ?>
+            <?= $this->Html->link(__('Listar Receitas'), ['action' => 'index'], ['class' => 'side-nav-item']) ?>
         </div>
     </aside>
     <div class="column column-80">
         <div class="receitas form content">
             <?= $this->Form->create($receita) ?>
             <fieldset>
-                <legend><?= __('Edit Receita') ?></legend>
+                <legend><?= __('Editar Receita') ?></legend>
                 <?php
                     echo $this->Form->control('nome');
                     echo $this->Form->control('descricao');
@@ -35,7 +35,7 @@
                     ]);
                 ?>
             </fieldset>
-            <?= $this->Form->button(__('Submit')) ?>
+            <?= $this->Form->button(__('Salvar')) ?>
             <?= $this->Form->end() ?>
         </div>
     </div>

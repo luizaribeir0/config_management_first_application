@@ -5,7 +5,7 @@
  */
 ?>
 <div class="receitas index content">
-    <?= $this->Html->link(__('New Receita'), ['action' => 'add'], ['class' => 'button float-right']) ?>
+    <?= $this->Html->link(__('Nova Receita'), ['action' => 'add'], ['class' => 'button float-right']) ?>
     <h3><?= __('Receitas') ?></h3>
     <div class="receitas-filtros">
         <?= $this->Form->create(null, ['type' => 'get']) ?>
@@ -76,7 +76,7 @@
                     <th><?= $this->Paginator->sort('data_registro') ?></th>
                     <th><?= $this->Paginator->sort('custo') ?></th>
                     <th><?= $this->Paginator->sort('tipo_receita') ?></th>
-                    <th class="actions"><?= __('Actions') ?></th>
+                    <th class="actions"><?= __('Acoes') ?></th>
                 </tr>
             </thead>
             <tbody>
@@ -88,14 +88,14 @@
                     <td><?= 'R$ ' . h(number_format((float)$receita->custo, 2, ',', '.')) ?></td>
                     <td><?= h(ucfirst((string)$receita->tipo_receita)) ?></td>
                     <td class="actions">
-                        <?= $this->Html->link(__('View'), ['action' => 'view', $receita->id]) ?>
-                        <?= $this->Html->link(__('Edit'), ['action' => 'edit', $receita->id]) ?>
+                        <?= $this->Html->link(__('Visualizar'), ['action' => 'view', $receita->id]) ?>
+                        <?= $this->Html->link(__('Editar'), ['action' => 'edit', $receita->id]) ?>
                         <?= $this->Form->postLink(
-                            __('Delete'),
+                            __('Excluir'),
                             ['action' => 'delete', $receita->id],
                             [
                                 'method' => 'delete',
-                                'confirm' => __('Are you sure you want to delete # {0}?', $receita->id),
+                                'confirm' => __('Tem certeza que deseja excluir #{0}?', $receita->id),
                             ]
                         ) ?>
                     </td>
@@ -106,12 +106,12 @@
     </div>
     <div class="paginator">
         <ul class="pagination">
-            <?= $this->Paginator->first('<< ' . __('first')) ?>
-            <?= $this->Paginator->prev('< ' . __('previous')) ?>
+            <?= $this->Paginator->first('<< ' . __('primeira')) ?>
+            <?= $this->Paginator->prev('< ' . __('anterior')) ?>
             <?= $this->Paginator->numbers() ?>
-            <?= $this->Paginator->next(__('next') . ' >') ?>
-            <?= $this->Paginator->last(__('last') . ' >>') ?>
+            <?= $this->Paginator->next(__('proxima') . ' >') ?>
+            <?= $this->Paginator->last(__('ultima') . ' >>') ?>
         </ul>
-        <p><?= $this->Paginator->counter(__('Page {{page}} of {{pages}}, showing {{current}} record(s) out of {{count}} total')) ?></p>
+        <p><?= $this->Paginator->counter(__('Pagina {{page}} de {{pages}}, exibindo {{current}} registro(s) de {{count}} no total')) ?></p>
     </div>
 </div>

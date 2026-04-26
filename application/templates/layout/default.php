@@ -42,6 +42,7 @@ $cakeDescription = 'CakePHP: the rapid development php framework';
             <?php if ($identity = $this->request->getAttribute('identity')) : ?>
                 <span><?= h($identity->get('nome') ?? $identity->get('login')) ?></span>
                 <?= $this->Html->link(__('Receitas'), ['controller' => 'Receitas', 'action' => 'index']) ?>
+                <?= $this->Html->link(__('Meu Perfil'), ['controller' => 'Usuarios', 'action' => 'perfil']) ?>
                 <?= $this->Html->link(__('Sair'), ['controller' => 'Usuarios', 'action' => 'logout']) ?>
             <?php else : ?>
                 <?= $this->Html->link(__('Entrar'), ['controller' => 'Usuarios', 'action' => 'login']) ?>

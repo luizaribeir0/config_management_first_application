@@ -7,11 +7,11 @@
 <div class="row">
     <aside class="column">
         <div class="side-nav">
-            <h4 class="heading"><?= __('Actions') ?></h4>
-            <?= $this->Html->link(__('Edit Receita'), ['action' => 'edit', $receita->id], ['class' => 'side-nav-item']) ?>
-            <?= $this->Form->postLink(__('Delete Receita'), ['action' => 'delete', $receita->id], ['confirm' => __('Are you sure you want to delete # {0}?', $receita->id), 'class' => 'side-nav-item']) ?>
-            <?= $this->Html->link(__('List Receitas'), ['action' => 'index'], ['class' => 'side-nav-item']) ?>
-            <?= $this->Html->link(__('New Receita'), ['action' => 'add'], ['class' => 'side-nav-item']) ?>
+            <h4 class="heading"><?= __('Acoes') ?></h4>
+            <?= $this->Html->link(__('Editar Receita'), ['action' => 'edit', $receita->id], ['class' => 'side-nav-item']) ?>
+            <?= $this->Form->postLink(__('Excluir Receita'), ['action' => 'delete', $receita->id], ['confirm' => __('Tem certeza que deseja excluir #{0}?', $receita->id), 'class' => 'side-nav-item']) ?>
+            <?= $this->Html->link(__('Listar Receitas'), ['action' => 'index'], ['class' => 'side-nav-item']) ?>
+            <?= $this->Html->link(__('Nova Receita'), ['action' => 'add'], ['class' => 'side-nav-item']) ?>
         </div>
     </aside>
     <div class="column column-80">
@@ -23,11 +23,11 @@
                     <td><?= h($receita->nome) ?></td>
                 </tr>
                 <tr>
-                    <th><?= __('Tipo Receita') ?></th>
+                    <th><?= __('Tipo de Receita') ?></th>
                     <td><?= h($receita->tipo_receita) ?></td>
                 </tr>
                 <tr>
-                    <th><?= __('Id') ?></th>
+                    <th><?= __('ID') ?></th>
                     <td><?= $this->Number->format($receita->id) ?></td>
                 </tr>
                 <tr>
@@ -35,7 +35,7 @@
                     <td><?= $this->Number->format($receita->custo) ?></td>
                 </tr>
                 <tr>
-                    <th><?= __('Data Registro') ?></th>
+                    <th><?= __('Data de Registro') ?></th>
                     <td><?= h($receita->data_registro) ?></td>
                 </tr>
             </table>
