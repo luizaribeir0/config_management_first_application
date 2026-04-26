@@ -261,6 +261,10 @@ return [
         ],
     ],
 
+    'Receitas' => [
+        'notificationEmail' => env('RECEITAS_NOTIFICATION_EMAIL', ''),
+    ],
+
     /*
      * Connection information used by the ORM to connect
      * to your application's datastores.
@@ -290,6 +294,10 @@ return [
             'driver' => Mysql::class,
             'persistent' => false,
             'timezone' => 'UTC',
+            'username' => 'root',
+            'password' => 'root',
+
+            'database' => 'application',
 
             /*
              * For MariaDB/MySQL the internal default changed from utf8 to utf8mb4, aka full utf-8 support
