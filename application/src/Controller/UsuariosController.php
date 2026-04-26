@@ -17,7 +17,7 @@ class UsuariosController extends AppController
     public function beforeFilter(EventInterface $event): void
     {
         parent::beforeFilter($event);
-        $this->Authentication->allowUnauthenticated(['login', 'logout']);
+        $this->Authentication->allowUnauthenticated(['login', 'logout', 'add']);
     }
 
     /**
@@ -37,6 +37,34 @@ class UsuariosController extends AppController
         if ($this->request->is('post')) {
             $this->Flash->error(__('Login ou senha incorretos, ou usuário inativo.'));
         }
+    }
+
+    /**
+     * @return \Cake\Http\Response|null|void
+     */
+    public function add()
+    {
+        if ($this->Authentication->getIdentity()) {
+            return $this->redirect(['controller' => 'Receitas', 'action' => 'index']);
+        }
+
+        $usuarios = $this->fetchTable('Usuarios');
+        $usuario = $usuarios->newEmptyEntity();
+
+        if ($this->request->is('post')) {
+            $data = $this->request->getData();
+            $data['situacao'] = 'ativo';
+
+            $usuario = $usuarios->patchEntity($usuario, $data);
+            if ($usuarios->save($usuario)) {
+                $this->Flash->success(__('Usuário criado com sucesso. Faça login para continuar.'));
+
+                return $this->redirect(['action' => 'login']);
+            }
+            $this->Flash->error(__('Não foi possível criar o usuário. Verifique os campos e tente novamente.'));
+        }
+
+        $this->set(compact('usuario'));
     }
 
     /**

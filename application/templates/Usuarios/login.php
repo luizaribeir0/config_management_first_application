@@ -27,5 +27,8 @@ $this->assign('title', __('Entrar'));
         </fieldset>
         <?= $this->Form->button(__('Entrar')) ?>
         <?= $this->Form->end() ?>
+        <p style="margin-top: 1rem;">
+            <?= $this->Html->link(__('Criar novo usuário'), ['controller' => 'Usuarios', 'action' => 'add']) ?>
+        </p>
     </div>
 </div>
