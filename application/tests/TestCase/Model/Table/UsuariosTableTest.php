@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Test\TestCase\Model\Table;
 
 use App\Model\Table\UsuariosTable;
+use Authentication\PasswordHasher\DefaultPasswordHasher;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -168,5 +169,49 @@ class UsuariosTableTest extends TestCase
         $this->assertCount(1, $result);
         $this->assertSame('ativo', $result[0]['situacao']);
         $this->assertSame('usuario.ativo', $result[0]['login']);
+    }
+
+    public function testLoginFlowFindsOnlyActiveUserByLogin(): void
+    {
+        $activeUser = $this->Usuarios
+            ->find('active')
+            ->where(['login' => 'usuario.ativo'])
+            ->first();
+
+        $inactiveUser = $this->Usuarios
+            ->find('active')
+            ->where(['login' => 'usuario.inativo'])
+            ->first();
+
+        $this->assertNotNull($activeUser);
+        $this->assertSame('usuario.ativo', $activeUser->login);
+        $this->assertSame('ativo', $activeUser->situacao);
+        $this->assertNull($inactiveUser);
+    }
+
+    public function testLoginFlowValidatesPasswordForActiveUser(): void
+    {
+        $plainPassword = 'senha-super-segura';
+        $newUser = $this->Usuarios->newEntity([
+            'nome' => 'Usuario Login',
+            'login' => 'usuario.login',
+            'email' => 'usuario.login@example.com',
+            'senha' => $plainPassword,
+            'situacao' => 'ativo',
+        ]);
+        $saveResult = $this->Usuarios->save($newUser);
+
+        $this->assertNotFalse($saveResult);
+
+        $userFromLogin = $this->Usuarios
+            ->find('active')
+            ->where(['login' => 'usuario.login'])
+            ->first();
+
+        $this->assertNotNull($userFromLogin);
+
+        $hasher = new DefaultPasswordHasher();
+        $this->assertTrue($hasher->check($plainPassword, $userFromLogin->senha));
+        $this->assertFalse($hasher->check('senha-incorreta', $userFromLogin->senha));
     }
 }

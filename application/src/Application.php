@@ -30,6 +30,7 @@ use Cake\Http\BaseApplication;
 use Cake\Http\Middleware\BodyParserMiddleware;
 use Cake\Http\Middleware\CsrfProtectionMiddleware;
 use Cake\Http\MiddlewareQueue;
+use Cake\Http\ServerRequest;
 use Cake\ORM\Locator\TableLocator;
 use Cake\Routing\Middleware\AssetMiddleware;
 use Cake\Routing\Middleware\RoutingMiddleware;
@@ -99,6 +100,10 @@ class Application extends BaseApplication implements AuthenticationServiceProvid
             // https://book.cakephp.org/5/en/security/csrf.html#cross-site-request-forgery-csrf-middleware
             ->add(new CsrfProtectionMiddleware([
                 'httponly' => true,
+                'skipCheckCallback' => function (ServerRequest $request): bool {
+                    return $request->getParam('controller') === 'Usuarios'
+                        && $request->getParam('action') === 'login';
+                },
             ]))
             ->add(new AuthenticationMiddleware($this));
 
