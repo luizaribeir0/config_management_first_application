@@ -14,6 +14,21 @@ use Dompdf\Options;
 class ReceitasController extends AppController
 {
     /**
+     * @return string|null
+     */
+    private function getAuthenticatedUserEmail(): ?string
+    {
+        $identity = $this->Authentication->getIdentity();
+        if ($identity === null) {
+            return null;
+        }
+
+        $email = (string)($identity->get('email') ?? '');
+
+        return $email !== '' ? $email : null;
+    }
+
+    /**
      * Index method
      *
      * @return \Cake\Http\Response|null|void Renders view
@@ -193,12 +208,15 @@ HTML;
         $receita = $this->Receitas->newEmptyEntity();
         if ($this->request->is('post')) {
             $receita = $this->Receitas->patchEntity($receita, $this->request->getData());
-            if ($this->Receitas->save($receita)) {
-                $this->Flash->success(__('The receita has been saved.'));
+            if ($this->Receitas->save($receita, [
+                'actorEmail' => $this->getAuthenticatedUserEmail(),
+                'notificationAction' => 'criada',
+            ])) {
+                $this->Flash->success(__('Receita salva com sucesso.'));
 
                 return $this->redirect(['action' => 'index']);
             }
-            $this->Flash->error(__('The receita could not be saved. Please, try again.'));
+            $this->Flash->error(__('Nao foi possivel salvar a receita. Tente novamente.'));
         }
         $this->set(compact('receita'));
     }
@@ -215,12 +233,15 @@ HTML;
         $receita = $this->Receitas->get($id, contain: []);
         if ($this->request->is(['patch', 'post', 'put'])) {
             $receita = $this->Receitas->patchEntity($receita, $this->request->getData());
-            if ($this->Receitas->save($receita)) {
-                $this->Flash->success(__('The receita has been saved.'));
+            if ($this->Receitas->save($receita, [
+                'actorEmail' => $this->getAuthenticatedUserEmail(),
+                'notificationAction' => 'atualizada',
+            ])) {
+                $this->Flash->success(__('Receita atualizada com sucesso.'));
 
                 return $this->redirect(['action' => 'index']);
             }
-            $this->Flash->error(__('The receita could not be saved. Please, try again.'));
+            $this->Flash->error(__('Nao foi possivel atualizar a receita. Tente novamente.'));
         }
         $this->set(compact('receita'));
     }
@@ -236,10 +257,10 @@ HTML;
     {
         $this->request->allowMethod(['post', 'delete']);
         $receita = $this->Receitas->get($id);
-        if ($this->Receitas->delete($receita)) {
-            $this->Flash->success(__('The receita has been deleted.'));
+        if ($this->Receitas->delete($receita, ['actorEmail' => $this->getAuthenticatedUserEmail()])) {
+            $this->Flash->success(__('Receita excluida com sucesso.'));
         } else {
-            $this->Flash->error(__('The receita could not be deleted. Please, try again.'));
+            $this->Flash->error(__('Nao foi possivel excluir a receita. Tente novamente.'));
         }
 
         return $this->redirect(['action' => 'index']);

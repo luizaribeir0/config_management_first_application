@@ -50,6 +50,11 @@ class UsuariosTable extends Table
             ->notEmptyString('login');
 
         $validator
+            ->email('email')
+            ->maxLength('email', 255)
+            ->allowEmptyString('email');
+
+        $validator
             ->scalar('senha')
             ->maxLength('senha', 255)
             ->requirePresence('senha', 'create')

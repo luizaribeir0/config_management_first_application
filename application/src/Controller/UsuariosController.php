@@ -50,4 +50,35 @@ class UsuariosController extends AppController
 
         return $this->redirect(['action' => 'login']);
     }
+
+    /**
+     * @return \Cake\Http\Response|null|void
+     */
+    public function perfil()
+    {
+        $identity = $this->Authentication->getIdentity();
+        if ($identity === null) {
+            return $this->redirect(['action' => 'login']);
+        }
+
+        $usuarios = $this->fetchTable('Usuarios');
+        $usuario = $usuarios->get((int)$identity->getIdentifier());
+
+        if ($this->request->is(['patch', 'post', 'put'])) {
+            $data = $this->request->getData();
+            if (empty($data['senha'])) {
+                unset($data['senha']);
+            }
+
+            $usuario = $usuarios->patchEntity($usuario, $data);
+            if ($usuarios->save($usuario)) {
+                $this->Flash->success(__('Perfil atualizado com sucesso.'));
+
+                return $this->redirect(['controller' => 'Receitas', 'action' => 'index']);
+            }
+            $this->Flash->error(__('Não foi possível atualizar seu perfil. Tente novamente.'));
+        }
+
+        $this->set(compact('usuario'));
+    }
 }
