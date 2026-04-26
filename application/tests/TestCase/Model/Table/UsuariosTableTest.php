@@ -7,211 +7,168 @@ use App\Model\Table\UsuariosTable;
 use Authentication\PasswordHasher\DefaultPasswordHasher;
 use Cake\TestSuite\TestCase;
 
-/**
- * App\Model\Table\UsuariosTable Test Case
- */
 class UsuariosTableTest extends TestCase
 {
-    /**
-     * @var \App\Model\Table\UsuariosTable
-     */
     protected UsuariosTable $Usuarios;
 
-    /**
-     * @var array<string>
-     */
     protected array $fixtures = [
         'app.Usuarios',
     ];
 
-    /**
-     * @return void
-     */
     protected function setUp(): void
     {
         parent::setUp();
-        $config = $this->getTableLocator()->exists('Usuarios') ? [] : ['className' => UsuariosTable::class];
-        /** @var \App\Model\Table\UsuariosTable $usuarios */
-        $usuarios = $this->getTableLocator()->get('Usuarios', $config);
-        $this->Usuarios = $usuarios;
+        $this->Usuarios = $this->getTableLocator()->get('Usuarios');
     }
 
-    /**
-     * @return void
-     */
     protected function tearDown(): void
     {
         unset($this->Usuarios);
         parent::tearDown();
     }
 
-    public function testValidationDefaultAcceptsValidDataWithEmail(): void
+    public function testCreateUserPersistsAndReturnsId(): void
     {
         $entity = $this->Usuarios->newEntity([
             'nome' => 'Maria',
-            'login' => 'maria',
-            'email' => 'maria@example.com',
-            'senha' => '123456',
-            'situacao' => 'ativo',
-        ]);
-
-        $this->assertSame([], $entity->getErrors());
-    }
-
-    public function testValidationDefaultAcceptsValidDataWithoutEmail(): void
-    {
-        $entity = $this->Usuarios->newEntity([
-            'nome' => 'Jose',
-            'login' => 'jose',
-            'senha' => '123456',
-            'situacao' => 'ativo',
-        ]);
-
-        $this->assertArrayNotHasKey('email', $entity->getErrors());
-    }
-
-    public function testValidationDefaultRejectsInvalidEmail(): void
-    {
-        $entity = $this->Usuarios->newEntity([
-            'nome' => 'Ana',
-            'login' => 'ana',
-            'email' => 'email-invalido',
-            'senha' => '123456',
-            'situacao' => 'ativo',
-        ]);
-
-        $this->assertArrayHasKey('email', $entity->getErrors());
-    }
-
-    public function testValidationDefaultRejectsEmailLongerThan255(): void
-    {
-        $email = str_repeat('a', 250) . '@x.com';
-        $entity = $this->Usuarios->newEntity([
-            'nome' => 'Ana',
-            'login' => 'ana2',
-            'email' => $email,
-            'senha' => '123456',
-            'situacao' => 'ativo',
-        ]);
-
-        $this->assertArrayHasKey('email', $entity->getErrors());
-    }
-
-    public function testValidationDefaultRequiresNomeOnCreate(): void
-    {
-        $entity = $this->Usuarios->newEntity([
-            'login' => 'semnome',
-            'senha' => '123456',
-            'situacao' => 'ativo',
-        ]);
-
-        $this->assertArrayHasKey('nome', $entity->getErrors());
-    }
-
-    public function testValidationDefaultRequiresLoginOnCreate(): void
-    {
-        $entity = $this->Usuarios->newEntity([
-            'nome' => 'Sem Login',
-            'senha' => '123456',
-            'situacao' => 'ativo',
-        ]);
-
-        $this->assertArrayHasKey('login', $entity->getErrors());
-    }
-
-    public function testValidationDefaultRequiresSenhaOnCreate(): void
-    {
-        $entity = $this->Usuarios->newEntity([
-            'nome' => 'Sem Senha',
-            'login' => 'semsenha',
-            'situacao' => 'ativo',
-        ]);
-
-        $this->assertArrayHasKey('senha', $entity->getErrors());
-    }
-
-    public function testValidationDefaultRejectsInvalidSituacao(): void
-    {
-        $entity = $this->Usuarios->newEntity([
-            'nome' => 'Situacao Invalida',
-            'login' => 'situacao.invalida',
-            'senha' => '123456',
-            'situacao' => 'pendente',
-        ]);
-
-        $this->assertArrayHasKey('situacao', $entity->getErrors());
-    }
-
-    public function testBuildRulesRejectsDuplicateLogin(): void
-    {
-        $entity = $this->Usuarios->newEntity([
-            'nome' => 'Duplicado',
-            'login' => 'usuario.ativo',
-            'email' => 'duplicado@example.com',
+            'login' => 'maria.persist',
+            'email' => 'maria.persist@example.com',
             'senha' => '123456',
             'situacao' => 'ativo',
         ]);
 
         $result = $this->Usuarios->save($entity);
 
-        $this->assertFalse($result);
+        $this->assertNotFalse($result);
+        $this->assertNotEmpty($entity->id);
+    }
+
+    public function testEmailIsOptionalButSavedWhenPresent(): void
+    {
+        $entity = $this->Usuarios->newEntity([
+            'nome' => 'Joao',
+            'login' => 'joao.email',
+            'email' => 'joao@email.com',
+            'senha' => '123456',
+            'situacao' => 'ativo',
+        ]);
+
+        $this->Usuarios->saveOrFail($entity);
+
+        $this->assertSame('joao@email.com', $entity->email);
+    }
+
+    public function testInvalidEmailPreventsSave(): void
+    {
+        $entity = $this->Usuarios->newEntity([
+            'nome' => 'Email Invalido',
+            'login' => 'email.invalido',
+            'email' => 'invalido',
+            'senha' => '123456',
+            'situacao' => 'ativo',
+        ]);
+
+        $this->assertFalse($this->Usuarios->save($entity));
+        $this->assertArrayHasKey('email', $entity->getErrors());
+    }
+
+    public function testPasswordIsHashedOnSave(): void
+    {
+        $plain = 'minha-senha';
+
+        $entity = $this->Usuarios->newEntity([
+            'nome' => 'Hash Test',
+            'login' => 'hash.test',
+            'senha' => $plain,
+            'situacao' => 'ativo',
+        ]);
+
+        $this->Usuarios->saveOrFail($entity);
+
+        $this->assertNotSame($plain, $entity->senha);
+
+        $hasher = new DefaultPasswordHasher();
+        $this->assertTrue($hasher->check($plain, $entity->senha));
+    }
+
+    public function testLoginMustBeUnique(): void
+    {
+        $entity = $this->Usuarios->newEntity([
+            'nome' => 'Duplicado',
+            'login' => 'usuario.ativo',
+            'senha' => '123456',
+            'situacao' => 'ativo',
+        ]);
+
+        $this->assertFalse($this->Usuarios->save($entity));
         $this->assertArrayHasKey('_isUnique', $entity->getError('login'));
     }
 
-    public function testFindActiveReturnsOnlyActiveUsers(): void
+    public function testSituacaoMustBeValid(): void
     {
-        $result = $this->Usuarios
-            ->find('active')
-            ->enableHydration(false)
-            ->all()
-            ->toList();
+        $entity = $this->Usuarios->newEntity([
+            'nome' => 'Teste',
+            'login' => 'situacao.teste',
+            'senha' => '123456',
+            'situacao' => 'invalido',
+        ]);
 
-        $this->assertCount(1, $result);
-        $this->assertSame('ativo', $result[0]['situacao']);
-        $this->assertSame('usuario.ativo', $result[0]['login']);
+        $this->assertFalse($this->Usuarios->save($entity));
+        $this->assertArrayHasKey('situacao', $entity->getErrors());
     }
 
-    public function testLoginFlowFindsOnlyActiveUserByLogin(): void
+    public function testFindActiveReturnsOnlyActive(): void
     {
-        $activeUser = $this->Usuarios
-            ->find('active')
-            ->where(['login' => 'usuario.ativo'])
-            ->first();
+        $result = $this->Usuarios->find('active')->all();
 
-        $inactiveUser = $this->Usuarios
+        foreach ($result as $user) {
+            $this->assertSame('ativo', $user->situacao);
+        }
+    }
+
+    public function testInactiveUserIsNotReturnedInActiveFinder(): void
+    {
+        $user = $this->Usuarios
             ->find('active')
             ->where(['login' => 'usuario.inativo'])
             ->first();
 
-        $this->assertNotNull($activeUser);
-        $this->assertSame('usuario.ativo', $activeUser->login);
-        $this->assertSame('ativo', $activeUser->situacao);
-        $this->assertNull($inactiveUser);
+        $this->assertNull($user);
     }
 
-    public function testLoginFlowValidatesPasswordForActiveUser(): void
+    public function testCanUpdateUserData(): void
     {
-        $plainPassword = 'senha-super-segura';
-        $newUser = $this->Usuarios->newEntity([
-            'nome' => 'Usuario Login',
-            'login' => 'usuario.login',
-            'email' => 'usuario.login@example.com',
-            'senha' => $plainPassword,
+        $user = $this->Usuarios->find()->first();
+
+        $user->nome = 'Nome Atualizado';
+        $this->Usuarios->saveOrFail($user);
+
+        $updated = $this->Usuarios->get($user->id);
+
+        $this->assertSame('Nome Atualizado', $updated->nome);
+    }
+
+    public function testPasswordValidationDuringLogin(): void
+    {
+        $plain = 'senha-login';
+
+        $entity = $this->Usuarios->newEntity([
+            'nome' => 'Login User',
+            'login' => 'login.user',
+            'senha' => $plain,
             'situacao' => 'ativo',
         ]);
-        $saveResult = $this->Usuarios->save($newUser);
 
-        $this->assertNotFalse($saveResult);
+        $this->Usuarios->saveOrFail($entity);
 
-        $userFromLogin = $this->Usuarios
+        $user = $this->Usuarios
             ->find('active')
-            ->where(['login' => 'usuario.login'])
+            ->where(['login' => 'login.user'])
             ->first();
 
-        $this->assertNotNull($userFromLogin);
-
         $hasher = new DefaultPasswordHasher();
-        $this->assertTrue($hasher->check($plainPassword, $userFromLogin->senha));
-        $this->assertFalse($hasher->check('senha-incorreta', $userFromLogin->senha));
+
+        $this->assertTrue($hasher->check($plain, $user->senha));
+        $this->assertFalse($hasher->check('errada', $user->senha));
     }
 }

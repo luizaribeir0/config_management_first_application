@@ -59,10 +59,16 @@ class ReceitasTable extends Table
     public function validationDefault(Validator $validator): Validator
     {
         $validator
-            ->scalar('nome')
-            ->maxLength('nome', 150)
-            ->requirePresence('nome', 'create')
-            ->notEmptyString('nome');
+        ->scalar('nome')
+        ->maxLength('nome', 150)
+        ->requirePresence('nome', 'create')
+        ->notEmptyString('nome')
+        ->add('nome', 'notBlank', [
+            'rule' => function ($value) {
+                return trim($value) !== '';
+            },
+            'message' => 'Nome não pode conter apenas espaço',
+        ]);
 
         $validator
             ->scalar('descricao')
@@ -125,9 +131,6 @@ class ReceitasTable extends Table
     private function sendReceitaNotification(EntityInterface $entity, string $action, ArrayObject $options): void
     {
         $recipient = (string)($options['actorEmail'] ?? '');
-        if ($recipient === '') {
-            $recipient = (string)Configure::read('Receitas.notificationEmail', '');
-        }
         if ($recipient === '') {
             return;
         }
