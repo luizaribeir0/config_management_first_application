@@ -40,6 +40,7 @@ class ErrorController extends AppController
      *
      * @param \Cake\Event\EventInterface<\Cake\Controller\Controller> $event Event.
      * @return void
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function beforeFilter(EventInterface $event): void
     {
@@ -63,6 +64,7 @@ class ErrorController extends AppController
      *
      * @param \Cake\Event\EventInterface<\Cake\Controller\Controller> $event Event.
      * @return void
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function afterFilter(EventInterface $event): void
     {

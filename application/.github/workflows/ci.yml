@@ -74,6 +74,10 @@ jobs:
     - name: Run PHP CodeSniffer
       run: vendor/bin/phpcs --report=checkstyle | cs2pr
 
+    - name: Run PHPMD
+      if: always()
+      run: vendor/bin/phpmd src,tests github phpmd.xml
+
     - name: Run phpstan
       if: always()
       run: phpstan

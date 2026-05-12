@@ -1,5 +1,9 @@
 <?xml version="1.0"?>
 <ruleset name="App">
+    <!--
+        PHP_CodeSniffer: CakePHP ruleset builds on PSR-12 (coding style) and PSR-4-style structure.
+        References: https://github.com/squizlabs/PHP_CodeSniffer https://www.php-fig.org/psr/psr-12/
+    -->
     <rule ref="CakePHP"/>
     <rule ref="SlevomatCodingStandard.TypeHints.ReturnTypeHint.MissingNativeTypeHint">
         <exclude-pattern>*/src/Controller/*</exclude-pattern>

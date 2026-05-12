@@ -83,6 +83,7 @@ class UsuariosTable extends Table
      * @param \Cake\ORM\Query\SelectQuery $query Query
      * @param array<string, mixed> $options Options
      * @return \Cake\ORM\Query\SelectQuery
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function findActive(SelectQuery $query, array $options): SelectQuery
     {

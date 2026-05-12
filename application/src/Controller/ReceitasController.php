@@ -192,7 +192,7 @@ HTML;
      * @return \Cake\Http\Response|null|void Renders view
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function view($id = null)
+    public function view(?string $id = null)
     {
         $receita = $this->Receitas->get($id, contain: []);
         $this->set(compact('receita'));
@@ -208,10 +208,12 @@ HTML;
         $receita = $this->Receitas->newEmptyEntity();
         if ($this->request->is('post')) {
             $receita = $this->Receitas->patchEntity($receita, $this->request->getData());
-            if ($this->Receitas->save($receita, [
+            if (
+                $this->Receitas->save($receita, [
                 'actorEmail' => $this->getAuthenticatedUserEmail(),
                 'notificationAction' => 'criada',
-            ])) {
+                ])
+            ) {
                 $this->Flash->success(__('Receita salva com sucesso.'));
 
                 return $this->redirect(['action' => 'index']);
@@ -228,15 +230,17 @@ HTML;
      * @return \Cake\Http\Response|null|void Redirects on successful edit, renders view otherwise.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function edit($id = null)
+    public function edit(?string $id = null)
     {
         $receita = $this->Receitas->get($id, contain: []);
         if ($this->request->is(['patch', 'post', 'put'])) {
             $receita = $this->Receitas->patchEntity($receita, $this->request->getData());
-            if ($this->Receitas->save($receita, [
+            if (
+                $this->Receitas->save($receita, [
                 'actorEmail' => $this->getAuthenticatedUserEmail(),
                 'notificationAction' => 'atualizada',
-            ])) {
+                ])
+            ) {
                 $this->Flash->success(__('Receita atualizada com sucesso.'));
 
                 return $this->redirect(['action' => 'index']);
@@ -253,7 +257,7 @@ HTML;
      * @return \Cake\Http\Response|null Redirects to index.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function delete($id = null)
+    public function delete(?string $id = null)
     {
         $this->request->allowMethod(['post', 'delete']);
         $receita = $this->Receitas->get($id);

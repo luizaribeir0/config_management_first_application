@@ -4,14 +4,11 @@ declare(strict_types=1);
 namespace App\Model\Table;
 
 use ArrayObject;
-use Cake\I18n\FrozenTime;
-use Cake\Core\Configure;
 use Cake\Datasource\EntityInterface;
 use Cake\Event\EventInterface;
+use Cake\I18n\FrozenTime;
 use Cake\Log\Log;
 use Cake\Mailer\Mailer;
-use Cake\ORM\Query\SelectQuery;
-use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
 use Throwable;
@@ -99,6 +96,7 @@ class ReceitasTable extends Table
      * @param \Cake\Datasource\EntityInterface $entity The persisted entity.
      * @param \ArrayObject<string, mixed> $options Save options.
      * @return void
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function afterSaveCommit(EventInterface $event, EntityInterface $entity, ArrayObject $options): void
     {
@@ -116,6 +114,7 @@ class ReceitasTable extends Table
      * @param \Cake\Datasource\EntityInterface $entity The deleted entity.
      * @param \ArrayObject<string, mixed> $options Delete options.
      * @return void
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function afterDeleteCommit(EventInterface $event, EntityInterface $entity, ArrayObject $options): void
     {
@@ -153,7 +152,8 @@ class ReceitasTable extends Table
                     ucfirst($action),
                 ))
                 ->deliver(sprintf(
-                    "Notificacao de receita\n\nA receita abaixo foi %s com sucesso.\n\nID: %s\nNome: %s\nTipo: %s\nCusto: %s\nData de registro: %s\n",
+                    "Notificacao de receita\n\nA receita abaixo foi %s com sucesso.\n\n"
+                    . "ID: %s\nNome: %s\nTipo: %s\nCusto: %s\nData de registro: %s\n",
                     $action,
                     (string)($entity->get('id') ?? '-'),
                     (string)($entity->get('nome') ?? '-'),

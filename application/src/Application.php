@@ -46,7 +46,6 @@ use Psr\Http\Message\ServerRequestInterface;
  */
 class Application extends BaseApplication implements AuthenticationServiceProviderInterface
 {
-
     /**
      * Load all the application configuration and bootstrap logic.
      *
@@ -150,6 +149,7 @@ class Application extends BaseApplication implements AuthenticationServiceProvid
      * @param \Cake\Core\ContainerInterface $container The Container to update.
      * @return void
      * @link https://book.cakephp.org/5/en/development/dependency-injection.html#dependency-injection
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function services(ContainerInterface $container): void
     {
